@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 10fr 10fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 0.8rem 1rem;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button.cancel-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            margin-top: 0.5rem;
+        }
+
+        button.cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.2rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .task-item:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #818cf8;
+        }
+
+        .task-user {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+        }
+
+        .task-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .task-deadline {
+            color: #fb7185;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            width: auto;
+            padding: 0.4rem;
+            border-radius: 0.5rem;
+        }
+
+        .edit-btn {
+            color: #818cf8;
+        }
+
+        .edit-btn:hover {
+            background: rgba(129, 140, 248, 0.1);
+        }
+
+        .delete-btn {
+            color: #f43f5e;
+        }
+
+        .delete-btn:hover {
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Task Management API</h1>
+            <p class="subtitle">Simple Task Management</p>
+        </header>
+
+        <div class="grid">
+            <!-- Create/Edit Task Card -->
+            <div class="card">
+                <h2 id="formTitle">New Task</h2>
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" placeholder="ex. user1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="title" placeholder="Task Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="3" placeholder="Details..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="date" id="deadline">
+                    </div>
+                    <button type="submit" id="submitBtn">Add Task</button>
+                    <button type="button" id="cancelBtn" class="cancel-btn" style="display: none;">Cancel</button>
+                </form>
+            </div>
+
+            <!-- List Tasks Card -->
+            <div class="card">
+                <h2>All Tasks</h2>
+                <div id="taskList" class="task-list">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/index.php/tasks';
+        const taskForm = document.getElementById('taskForm');
+        const taskList = document.getElementById('taskList');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const taskIdInput = document.getElementById('taskId');
+
+        let allTasks = [];
+
+        // Fetch Tasks
+        async function fetchTasks() {
+            try {
+                const res = await fetch(API_URL);
+                allTasks = await res.json();
+                renderTasks(allTasks);
+            } catch (err) {
+                console.error('Fetch error:', err);
+                taskList.innerHTML = '<div class="empty-state">Connection error with API.</div>';
+            }
+        }
+
+        // Render Tasks
+        function renderTasks(tasks) {
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state">No tasks exist.</div>';
+                return;
+            }
+
+            taskList.innerHTML = tasks.map(task => `
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">${escapeHtml(task.title)}</span>
+                        <span class="task-user">${escapeHtml(task.username)}</span>
+                    </div>
+                    <div class="task-desc">${escapeHtml(task.description || 'No description')}</div>
+                    <div class="task-footer">
+                        <span class="task-deadline">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            ${task.deadline || 'No deadline'}
+                        </span>
+                        <div class="actions">
+                            <button class="action-btn edit-btn" onclick="editTask('${task.id}')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteTask('${task.id}')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Create or Update Task
+        taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = taskIdInput.value;
+            const data = {
+                username: document.getElementById('username').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                deadline: document.getElementById('deadline').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    resetForm();
+                    fetchTasks();
+                }
+            } catch (err) {
+                console.error('Submit error:', err);
+            }
+        });
+
+        // Edit Task (Populate form)
+        function editTask(id) {
+            const task = allTasks.find(t => t.id == id);
+            if (!task) return;
+
+            taskIdInput.value = task.id;
+            document.getElementById('username').value = task.username;
+            document.getElementById('title').value = task.title;
+            document.getElementById('description').value = task.description;
+            document.getElementById('deadline').value = task.deadline;
+
+            formTitle.textContent = 'Edit Task';
+            submitBtn.textContent = 'Update Task';
+            cancelBtn.style.display = 'block';
+
+            // Scroll to form
+            taskForm.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel Edit
+        cancelBtn.addEventListener('click', resetForm);
+
+        function resetForm() {
+            taskForm.reset();
+            taskIdInput.value = '';
+            formTitle.textContent = 'New Task';
+            submitBtn.textContent = 'Add Task';
+            cancelBtn.style.display = 'none';
+        }
+
+        // Delete Task
+        async function deleteTask(id) {
+            if (!confirm('Are you sure?')) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                if (res.ok) fetchTasks();
+            } catch (err) {
+                console.error('Delete error:', err);
+            }
+        }
+
+        // Utility to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initial fetch
+        fetchTasks();
+    </script>
+</body>
+
+</html>

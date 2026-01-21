@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - ./src:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/index.php/tasks"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  tests:
+    image: python:3.10-slim
+    volumes:
+      - ./tests:/tests
+    depends_on:
+      api:
+        condition: service_healthy
+    working_dir: /tests
+    environment:
+      - API_URL=http://api/index.php/tasks
+    command: >
+      sh -c "pip install -r requirements.txt && pytest test_api.py"
