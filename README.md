@@ -57,4 +57,5 @@ docker run -p 8000:80 task-api
 - `Dockerfile` & `docker-compose.yml`: Ρυθμίσεις Docker.
 
 ## Screenshots & Αναφορά
-Στο φάκελο της εργασίας θα βρείτε την αναφορά PDF με αναλυτικές περιγραφές και screenshots από τη λειτουργία της εφαρμογής και των tests.
+Στο φάκελο της εργασίας στο OpenCourses θα βρείτε την αναφορά PDF με αναλυτικές περιγραφές και screenshots από τη λειτουργία της εφαρμογής και των tests.
+
